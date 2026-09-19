@@ -1,5 +1,5 @@
 import type { RemoteSearchParams } from "@/types/api";
-import type { RemoteWork, WorkFullNumber } from "@/types/workMeta";
+import type { RemoteWork, WorkFullCode } from "@/types/workMeta";
 import * as cheerio from "cheerio";
 import cvMap from "./cvMap.json" with { type: "json" };
 import circleMap from "./circleMap.json" with { type: "json" };
@@ -20,7 +20,7 @@ export default async (clientSP: RemoteSearchParams): Promise<RemoteWork> => {
         size: 14,
         page: clientSP.page,
         total: data.totalCount,
-        jFullNumber: data.jFullNums,
+        jFullCode: data.jFullNums,
     };
 };
 
@@ -54,9 +54,9 @@ const urlByKeyword = (clientSP: RemoteSearchParams): URL => {
 export const searchAllInPage = async (
     clientSP: RemoteSearchParams,
 ): Promise<{
-    jFullNums: WorkFullNumber[];
+    jFullNums: WorkFullCode[];
     totalCount: number;
-    pageIds: Record<WorkFullNumber, number>;
+    pageIds: Record<WorkFullCode, number>;
 }> => {
     const baseUrl =
         urlByCv(clientSP) ?? urlByCircle(clientSP) ?? urlByKeyword(clientSP);
@@ -105,8 +105,8 @@ export const searchAllInPage = async (
     let html;
     let ret: {
         totalCount: number;
-        jFullNums: WorkFullNumber[];
-        pageIds: Record<WorkFullNumber, number>;
+        jFullNums: WorkFullCode[];
+        pageIds: Record<WorkFullCode, number>;
     } = {
         totalCount: 0,
         jFullNums: [],
@@ -137,7 +137,7 @@ export const searchAllInPage = async (
         .map((_, el) => {
             const text = $(el).text();
 
-            const jFullNum = text.match(/[RBV]J\d+/i)?.[0].toUpperCase() as WorkFullNumber;
+            const jFullNum = text.match(/[RBV]J\d+/i)?.[0].toUpperCase() as WorkFullCode;
             if (!jFullNum) return null;
 
             const href = $(el).find("h2.entry-title a").attr("href");

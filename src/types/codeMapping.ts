@@ -1,10 +1,10 @@
 export default {
     work: {
-        RJ: -1,
+        RJ: "",
         BJ: -2,
         VJ: -3,
     },
     group: {
-        RG: -1,
+        RG: 0,
     },
 } as const

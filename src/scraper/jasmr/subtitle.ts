@@ -6,12 +6,12 @@ export default async (
     fileHashObj: TrackFileHash,
 ): Promise<SubtitleQueryHash<"jasmr">> => {
     if (fileHashObj.source != "jasmr") return Promise.reject();
-    const jNum = fileHashObj.id;
-    if (!jNum) return Promise.reject();
+    const jCode = fileHashObj.id;
+    if (!jCode) return Promise.reject();
 
     const ret: SubtitleQueryHash<"jasmr"> = {
         source: "jasmr",
-        id: jNum,
+        id: jCode,
         type: "subtitle-lrc",
     };
     return ret;

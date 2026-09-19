@@ -1,5 +1,5 @@
 import type { TrackRespFunc, BaseTrackFile } from "@/types/api";
-import type { WorkFullNumber } from "@/types/workMeta";
+import type { WorkFullCode } from "@/types/workMeta";
 import { tracks as tracks_jasmr } from "./jasmr";
 import { tracks as tracks_hentaiasmr } from "./hentaiasmr";
 import { tracks as tracks_japaneseasmr } from "./japaneseasmr";
@@ -7,29 +7,29 @@ import { tracks as tracks_asmr18fans } from "./asmr18fans";
 import { tracks as tracks_asmrone } from "./asmrone";
 
 export default async ({
-    jFullNumber,
+    jFullCode,
 }: TrackRespFunc["params"]): Promise<TrackRespFunc["result"][]> => {
-    const tracks: BaseTrackFile[] = await tracks_asmrone({ jFullNumber })
+    const tracks: BaseTrackFile[] = await tracks_asmrone({ jFullCode })
         .catch(() =>
             Promise.any([
-                tracks_jasmr({ jFullNumber }),
-                tracks_japaneseasmr({ jFullNumber }),
-                tracks_hentaiasmr({ jFullNumber }),
-                tracks_asmr18fans({ jFullNumber }),
+                tracks_jasmr({ jFullCode }),
+                tracks_japaneseasmr({ jFullCode }),
+                tracks_hentaiasmr({ jFullCode }),
+                tracks_asmr18fans({ jFullCode }),
             ]),
         )
         .catch(() => []);
 
     function convertTrack(
         track: BaseTrackFile,
-        jFullNumber: WorkFullNumber,
+        jFullCode: WorkFullCode,
     ): TrackRespFunc["result"] {
         if (track.type === "folder") {
             return {
                 type: "folder",
                 title: track.fileName,
                 children: track.children.map((child) =>
-                    convertTrack(child, jFullNumber),
+                    convertTrack(child, jFullCode),
                 ),
             };
         }
@@ -39,7 +39,7 @@ export default async ({
             title: track.fileName,
             work: {
                 id: 0,
-                source_id: jFullNumber,
+                source_id: jFullCode,
                 source_type: "DLSITE",
             },
             workTitle: "",
@@ -51,7 +51,7 @@ export default async ({
         };
     }
     const ret = tracks.map((track) =>
-        convertTrack(track, `${jFullNumber}`),
+        convertTrack(track, `${jFullCode}`),
     ) as TrackRespFunc["result"][];
     return ret;
 };

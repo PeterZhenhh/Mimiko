@@ -1,5 +1,5 @@
 import type { RemoteSearchParams } from "@/types/api";
-import type { RemoteWork, WorkFullNumber } from "@/types/workMeta";
+import type { RemoteWork, WorkFullCode } from "@/types/workMeta";
 
 type SearchParms = {
     order:
@@ -28,14 +28,14 @@ export default async (clientSP: RemoteSearchParams): Promise<RemoteWork> => {
         size: sizeLimit,
         page: clientSP.page,
         total: data.totalCount,
-        jFullNumber: data.jFullNums,
+        jFullCode: data.jFullNums,
     };
 };
 
 const all = async (
     clientSP: RemoteSearchParams,
     sizeLimit: 20,
-): Promise<{ jFullNums: WorkFullNumber[]; totalCount: number }> => {
+): Promise<{ jFullNums: WorkFullCode[]; totalCount: number }> => {
     const params: SearchParms = {
         order: "release",
         sort: clientSP.sort,
@@ -103,7 +103,7 @@ const all = async (
 
     let data;
     let ret = { totalCount: 0, jFullNums: [] } as {
-        jFullNums: WorkFullNumber[];
+        jFullNums: WorkFullCode[];
         totalCount: number;
     };
     try {

@@ -1,12 +1,12 @@
-import * as codeReader from "./codeReader"
-import type { WorkCode, WorkFullNumber } from "@/types/workMeta"
+import * as codeReader from "./codeReader";
+import type { WorkNumber, WorkFullCode } from "@/types/workMeta";
 
+export const toCode = (jNum: WorkNumber): WorkFullCode => {
+    return `${codeReader.getCode(parseInt(jNum.toString().slice(0, 2)), "work")}${jNum.toString().slice(2)}` as WorkFullCode;
+};
 
-export const fromCode = (jCode: WorkCode): WorkFullNumber => {
-
-    return `${codeReader.getNum(parseInt(jCode.toString().slice(0, 2)), "work")}${jCode.toString().slice(2)}` as WorkFullNumber
-}
-
-export const toCode = (jFullNumber: WorkFullNumber): WorkCode => {
-    return parseInt(`${codeReader.getCode(jFullNumber.slice(0, 2), "work").toString()}${jFullNumber.toString().slice(2)}`) as WorkCode
-}
+export const toNum = (jFullCode: WorkFullCode): WorkNumber => {
+    return parseInt(
+        `${codeReader.getNum(jFullCode.slice(0, 2), "work").toString()}${jFullCode.toString().slice(2)}`,
+    ) as WorkNumber;
+};

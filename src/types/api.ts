@@ -1,4 +1,4 @@
-import { WorkFullNumber } from "./workMeta";
+import { WorkFullCode } from "./workMeta";
 
 export type ObjEncoded<T> = string & {
     readonly __objencoded__: T;
@@ -6,7 +6,7 @@ export type ObjEncoded<T> = string & {
 
 export type TrackRespFunc = {
     params: {
-        jFullNumber: WorkFullNumber;
+        jFullCode: WorkFullCode;
     };
     result:
         | {
@@ -211,7 +211,7 @@ const DATA_SOURCE = [
 export type TrackFileHash = (
     | {
           source: "japaneseasmr" | "asmr18fans" | "jasmr";
-          id: WorkFullNumber;
+          id: WorkFullCode;
       }
     | {
           source: "asmrone";
@@ -242,11 +242,11 @@ type SubtitleQueryHashBase =
       }
     | {
           source: "asmr18fans";
-          id: WorkFullNumber;
+          id: WorkFullCode;
       }
     | {
           source: "jasmr";
-          id: WorkFullNumber;
+          id: WorkFullCode;
       }
     | {
           [K in Exclude<(typeof DATA_SOURCE)[number], ExcludedSource>]: {

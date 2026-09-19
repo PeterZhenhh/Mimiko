@@ -10,7 +10,7 @@ import type {
 } from "./types/api.ts";
 import type { ClientSearchParams } from "./types/api.ts";
 import type { Context } from "hono";
-import type { WorkCode } from "./types/workMeta.ts";
+import type { WorkNumber } from "./types/workMeta.ts";
 import { Hono } from "hono/tiny";
 import { contextStorage } from "hono/context-storage";
 import { showRoutes } from "hono/dev";
@@ -67,25 +67,25 @@ app.get("/vas", async (c, next) => {
 });
 
 // 获取作品信息
-app.get("/:_{workInfo|work}/:jCode", async (c, next) => {
-    const jCode = parseInt(c.req.param("jCode")) as WorkCode;
-    const jFullNumber = jNumCoder.fromCode(jCode);
+app.get("/:_{workInfo|work}/:jNum", async (c, next) => {
+    const jNum = parseInt(c.req.param("jNum")) as WorkNumber;
+    const jFullCode = jNumCoder.toCode(jNum);
 
     return streamJson(c, async () => {
-        const workMeta = await fetchWorkMeta(jFullNumber);
+        const workMeta = await fetchWorkMeta(jFullCode);
         const data = fullFillWorkInfo(workMeta);
         return data;
     });
 });
 
 // 获取作品曲目文件
-app.get("/tracks/:jCode", async (c, next) => {
-    const jCode = parseInt(c.req.param("jCode")) as WorkCode;
-    const jFullNumber = jNumCoder.fromCode(jCode);
+app.get("/tracks/:jNum", async (c, next) => {
+    const jNum = parseInt(c.req.param("jNum")) as WorkNumber;
+    const jFullCode = jNumCoder.toCode(jNum);
     return streamJson(c, async () => {
         const data = await (
             await import("./scraper/tracks.ts")
-        ).default({ jFullNumber });
+        ).default({ jFullCode });
         return data;
     });
 });

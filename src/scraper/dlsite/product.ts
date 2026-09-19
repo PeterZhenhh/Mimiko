@@ -1,4 +1,4 @@
-import type { WorkFullNumber, WorkMeta } from "@/types/workMeta"
+import type { WorkFullCode, WorkMeta } from "@/types/workMeta"
 import type { SearchWorkIdObj, WorkInfo } from "@/types/api";
 import type { AppEnv } from "../../types/hono.ts";
 import { tryGetContext } from 'hono/context-storage'
@@ -18,15 +18,15 @@ const getRemoteDomain = () => {
     return tryGetContext<AppEnv>()?.env?.rprx_dlsite || "https://www.dlsite.com"
 }
 
-export const fetchWorkMeta = async (jFullNumber: WorkFullNumber): Promise<WorkMeta> => {
-    return (await fetchWorkMeta1(jFullNumber)) ?? (await fetchWorkMeta2(jFullNumber)) ?? ({ jFullNumber }) as WorkMeta
+export const fetchWorkMeta = async (jFullCode: WorkFullCode): Promise<WorkMeta> => {
+    return (await fetchWorkMeta1(jFullCode)) ?? (await fetchWorkMeta2(jFullCode)) ?? ({ jFullCode }) as WorkMeta
 }
 
-export const fetchWorkMeta1 = async (jFullNumber: WorkFullNumber): Promise<WorkMeta | null> => {
-    let rawData: Record<string, any> = ({ jFullNumber })
-    let retData = ({ jFullNumber }) as WorkMeta
+export const fetchWorkMeta1 = async (jFullCode: WorkFullCode): Promise<WorkMeta | null> => {
+    let rawData: Record<string, any> = ({ jFullCode })
+    let retData = ({ jFullCode }) as WorkMeta
     try {
-        const url = `${getRemoteDomain()}/maniax/api/=/product.json?workno=${jFullNumber.toUpperCase()}`
+        const url = `${getRemoteDomain()}/maniax/api/=/product.json?workno=${jFullCode.toUpperCase()}`
         console.log(url);
         rawData = (await (await fetch(url, {
             headers: {
@@ -57,7 +57,7 @@ export const fetchWorkMeta1 = async (jFullNumber: WorkFullNumber): Promise<WorkM
         review_count:
             Object.values(rawData.rate_count_detail as Record<string, number>)
                 .reduce((sum, count) => sum + count, 0) || 0,
-        jFullNumber: rawData.workno,
+        jFullCode: rawData.workno,
         age_category: rawData.age_category || 0,
         rate_average_2dp:
             Object.entries(rawData.rate_count_detail as Record<string, number>)
@@ -65,13 +65,13 @@ export const fetchWorkMeta1 = async (jFullNumber: WorkFullNumber): Promise<WorkM
                     ([score, count], [rate, n]) => [score + Number(rate) * n, count + n], [0, 0])
                 .reduce((score, count) => score / count) || 0,
         price: rawData.official_price || 0,
-        workTitle: rawData.product_name || jFullNumber.toUpperCase(),
+        workTitle: rawData.product_name || jFullCode.toUpperCase(),
         circleName: rawData.maker_name || "\0",
         releaseDate: new Date(rawData.regist_date).toISOString().slice(0, 10) || "",
         vas: ((rawData.creaters?.voice_by) || []).map((item: VoiceBy) => item.name),
         cover: `https://img.dlsite.jp/${rawData.image_main.relative_url}`,
         language_editions: (rawData.language_editions || []).map((item: Record<string, any>) => ({
-            id: jNumCoder.toCode(item.workno),
+            id: jNumCoder.toNum(item.workno),
             lang: item.label,
             title: `${item.label} ${item.workno}`,
             source_id: item.workno,
@@ -85,11 +85,11 @@ export const fetchWorkMeta1 = async (jFullNumber: WorkFullNumber): Promise<WorkM
     return retData
 }
 
-export const fetchWorkMeta2 = async (jFullNumber: WorkFullNumber): Promise<WorkMeta | null> => {
-    let rawData: Record<string, any> = ({ jFullNumber })
-    let retData = ({ jFullNumber }) as WorkMeta
+export const fetchWorkMeta2 = async (jFullCode: WorkFullCode): Promise<WorkMeta | null> => {
+    let rawData: Record<string, any> = ({ jFullCode })
+    let retData = ({ jFullCode }) as WorkMeta
     try {
-        const url = `${getRemoteDomain()}/maniax/product/info/ajax?product_id=${jFullNumber.toUpperCase()}`
+        const url = `${getRemoteDomain()}/maniax/product/info/ajax?product_id=${jFullCode.toUpperCase()}`
         console.log(url);
 
         rawData = (await (await fetch(url, {
@@ -98,7 +98,7 @@ export const fetchWorkMeta2 = async (jFullNumber: WorkFullNumber): Promise<WorkM
                 "accept-language": "zh-CN,zh;q=0.9",
                 "cookie": "locale=zh-cn"
             }
-        })).json())[jFullNumber.toUpperCase()]
+        })).json())[jFullCode.toUpperCase()]
         if (!rawData) {
             return null
         }
@@ -108,19 +108,19 @@ export const fetchWorkMeta2 = async (jFullNumber: WorkFullNumber): Promise<WorkM
     }
 
     retData = {
-        jFullNumber: jFullNumber.toUpperCase() as WorkFullNumber,
+        jFullCode: jFullCode.toUpperCase() as WorkFullCode,
         age_category: rawData.age_category || 0,
         rate_average_2dp: rawData.rate_average_2dp || 0,
         dl_count: rawData.dl_count || 0,
         review_count: rawData.rate_count || 0,
         price: rawData.official_price || 0,
-        workTitle: rawData.work_name || jFullNumber.toUpperCase(),
+        workTitle: rawData.work_name || jFullCode.toUpperCase(),
         circleName: rawData.maker_id || "\0",
         releaseDate: new Date(rawData.regist_date).toISOString().slice(0, 10) || "",
         vas: [],
         cover: rawData.work_image?.slice(2),
         language_editions: (rawData.dl_count_items || []).map((item: Record<string, any>) => ({
-            id: jNumCoder.toCode(item.workno),
+            id: jNumCoder.toNum(item.workno),
             lang: item.label,
             title: item.workno,
             source_id: item.workno,
@@ -132,10 +132,10 @@ export const fetchWorkMeta2 = async (jFullNumber: WorkFullNumber): Promise<WorkM
     return retData
 }
 
-export const fullFillWorkInfo = ({ jFullNumber, workTitle = "", circleName = "\0", releaseDate = "", vas = [], cover = "//", language_editions = [], tags = [], age_category = 0, rate_average_2dp = 0, dl_count = 0, price = 0, review_count = 0 }: WorkMeta): WorkInfo => {
+export const fullFillWorkInfo = ({ jFullCode, workTitle = "", circleName = "\0", releaseDate = "", vas = [], cover = "//", language_editions = [], tags = [], age_category = 0, rate_average_2dp = 0, dl_count = 0, price = 0, review_count = 0 }: WorkMeta): WorkInfo => {
     return {
-        id: jNumCoder.toCode(jFullNumber),
-        title: workTitle || jFullNumber,
+        id: jNumCoder.toNum(jFullCode),
+        title: workTitle || jFullCode,
         circle_id: 0,
         name: circleName,
         nsfw: true,
@@ -177,8 +177,8 @@ export const fullFillWorkInfo = ({ jFullNumber, workTitle = "", circleName = "\0
         age_category_string: "adult",
         duration: 0,
         source_type: "DLSITE",
-        source_id: jFullNumber,
-        source_url: `${getRemoteDomain()}/maniax/work/=/product_id/${jFullNumber}.html`,
+        source_id: jFullCode,
+        source_url: `${getRemoteDomain()}/maniax/work/=/product_id/${jFullCode}.html`,
         userRating: null,
         review_text: null,
         progress: null,

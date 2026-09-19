@@ -1,5 +1,5 @@
 import type { RemoteSearchParams } from "@/types/api";
-import type { RemoteWork, WorkFullNumber } from "@/types/workMeta";
+import type { RemoteWork, WorkFullCode } from "@/types/workMeta";
 import type { AppEnv } from "../../types/hono.ts";
 import { tryGetContext } from "hono/context-storage";
 import * as cheerio from "cheerio";
@@ -25,7 +25,7 @@ export default async (clientSP: RemoteSearchParams): Promise<RemoteWork> => {
         size: 21,
         page: clientSP.page,
         total: data.totalCount,
-        jFullNumber: data.jFullNums,
+        jFullCode: data.jFullNums,
     };
 };
 
@@ -41,7 +41,7 @@ const urlByKeyword = (clientSP: RemoteSearchParams): URL => {
 
 const all = async (
     clientSP: RemoteSearchParams,
-): Promise<{ jFullNums: WorkFullNumber[]; totalCount: number }> => {
+): Promise<{ jFullNums: WorkFullCode[]; totalCount: number }> => {
     const baseUrl = urlByCv(clientSP) ?? urlByKeyword(clientSP);
     const url = new URL(baseUrl);
     const params: SearchParms = {
@@ -79,7 +79,7 @@ const all = async (
     }).toString();
 
     let html;
-    let ret: { totalCount: number; jFullNums: WorkFullNumber[] } = {
+    let ret: { totalCount: number; jFullNums: WorkFullCode[] } = {
         totalCount: 0,
         jFullNums: [],
     };
@@ -114,7 +114,7 @@ const all = async (
     const rjCodes = $(".rjcodes")
         .map((_, el) => {
             const text = $(el).text();
-            const matches = text.match(/[RBV]J\d+/i)?.[0].toUpperCase() as WorkFullNumber;
+            const matches = text.match(/[RBV]J\d+/i)?.[0].toUpperCase() as WorkFullCode;
             return matches ?? null;
         })
         .get()

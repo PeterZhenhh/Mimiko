@@ -4,10 +4,10 @@ import * as cheerio from "cheerio";
 import { tryGetContext } from "hono/context-storage";
 
 export const tracks = async ({
-    jFullNumber,
+    jFullCode,
 }: TrackRespFunc["params"]): Promise<BaseTrackFile[]> => {
-    console.log(`Fetching tracks for ${jFullNumber} from hentaiasmr...`);
-    const url = `https://hentaiasmr.moe/${jFullNumber.toLowerCase()}.html`;
+    console.log(`Fetching tracks for ${jFullCode} from hentaiasmr...`);
+    const url = `https://hentaiasmr.moe/${jFullCode.toLowerCase()}.html`;
     let html: string;
     try {
         console.log(url);
@@ -26,7 +26,7 @@ export const tracks = async ({
         html = await resp.text();
     } catch (error) {
         console.error(
-            `Error fetching tracks for ${jFullNumber} from hentaiasmr:`,
+            `Error fetching tracks for ${jFullCode} from hentaiasmr:`,
             error,
         );
         return Promise.reject(error);

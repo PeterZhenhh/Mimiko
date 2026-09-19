@@ -158,7 +158,7 @@ Kikoeru-compatible authentication endpoint. Returns information about the curren
 ### Get Work Information
 
 ```http
-GET /api/work/{WorkCode}
+GET /api/work/{WorkNumber}
 ```
 
 Returns aggregated metadata for a work, including information collected from supported sources and DLsite enrichment data when available.
@@ -166,7 +166,7 @@ Returns aggregated metadata for a work, including information collected from sup
 ### Get Tracks
 
 ```http
-GET /api/tracks/{WorkCode}
+GET /api/tracks/{WorkNumber}
 ```
 
 Returns the hierarchical track tree and media information for a work.

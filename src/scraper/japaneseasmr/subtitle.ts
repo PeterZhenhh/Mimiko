@@ -8,19 +8,19 @@ export default async (
     fileHashObj: TrackFileHash,
 ): Promise<SubtitleQueryHash> => {
     if (fileHashObj.source != "japaneseasmr") return Promise.reject();
-    const jNum = fileHashObj.id;
-    if (!jNum) return Promise.reject();
+    const jCode = fileHashObj.id;
+    if (!jCode) return Promise.reject();
     const clientSP: RemoteSearchParams = {
         order: "release",
         page: 1,
-        searchKeyword: `${jNum}`,
+        searchKeyword: `${jCode}`,
         searchType: "keyword",
         sort: "desc",
         subtitle: 1,
     };
 
     const resp = await searchAllInPage(clientSP);
-    const pageId = resp.pageIds[jNum];
+    const pageId = resp.pageIds[jCode];
     if (!pageId) return Promise.reject();
 
     const ret: SubtitleQueryHash<"japaneseasmr"> = {

@@ -25,23 +25,23 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
     const results = await Promise.all(dataSources);
     console.log(
         "Search source result: ",
-        results.map((result) => result.jFullNumber.length),
+        results.map((result) => result.jFullCode.length),
     );
 
     // 1. 合并 + 去重
-    const jFullNumbers = [
-        ...new Set(results.flatMap((item) => item.jFullNumber)),
+    const jFullCodes = [
+        ...new Set(results.flatMap((item) => item.jFullCode)),
     ];
 
-    console.log(`Search rough result: ${jFullNumbers.length}`);
-    console.log(jFullNumbers);
+    console.log(`Search rough result: ${jFullCodes.length}`);
+    console.log(jFullCodes);
 
     // 2. 并发拉详情
     const entries = await Promise.all(
-        jFullNumbers.map(async (jnum) => {
-            const meta = await fetchWorkMeta(jnum);
+        jFullCodes.map(async (jCode) => {
+            const meta = await fetchWorkMeta(jCode);
             const info = fullFillWorkInfo(meta);
-            return [jnum, info] as const;
+            return [jCode, info] as const;
         }),
     );
 
@@ -50,8 +50,8 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
     const jInfo: Record<string, WorkInfo> = Object.fromEntries(entries);
 
     // 3. 拼 works（如果你需要）
-    let works: WorkInfo[] = jFullNumbers
-        .map((jnum) => jInfo[jnum])
+    let works: WorkInfo[] = jFullCodes
+        .map((jCode) => jInfo[jCode])
         .filter(Boolean)
         // 选定分类筛选
         .filter((work) => {
@@ -169,7 +169,7 @@ export default async (params: RemoteSearchParams): Promise<RespWorks> => {
             pageSize: 0,
             totalCount:
                 results.reduce(
-                    (sum, item) => sum + item.jFullNumber.length,
+                    (sum, item) => sum + item.jFullCode.length,
                     0,
                 ) > 0
                     ? 1

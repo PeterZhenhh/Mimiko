@@ -1,5 +1,5 @@
 import type { RemoteSearchParams } from "@/types/api";
-import type { RemoteWork, WorkFullNumber } from "@/types/workMeta";
+import type { RemoteWork, WorkFullCode } from "@/types/workMeta";
 import * as cheerio from "cheerio";
 import { getRemoteDomain } from "./";
 
@@ -20,7 +20,7 @@ export default async (clientSP: RemoteSearchParams): Promise<RemoteWork> => {
         size: 14,
         page: clientSP.page,
         total: data.totalCount,
-        jFullNumber: data.jFullNums,
+        jFullCode: data.jFullNums,
     };
 };
 
@@ -56,7 +56,7 @@ const urlByKeyword = (clientSP: RemoteSearchParams): URL => {
 
 const all = async (
     clientSP: RemoteSearchParams,
-): Promise<{ jFullNums: WorkFullNumber[]; totalCount: number }> => {
+): Promise<{ jFullNums: WorkFullCode[]; totalCount: number }> => {
     const baseUrl =
         urlByCv(clientSP) ??
         urlByCircle(clientSP) ??
@@ -91,7 +91,7 @@ const all = async (
     }).toString();
 
     let html;
-    let ret: { totalCount: number; jFullNums: WorkFullNumber[] } = {
+    let ret: { totalCount: number; jFullNums: WorkFullCode[] } = {
         totalCount: 0,
         jFullNums: [],
     };
@@ -118,7 +118,7 @@ const all = async (
     const rjCodes = $(".post-list a[href]")
         .map((_, el) => {
             const text = $(el).attr("href")!;
-            const matches = text.match(/[RBV]J\d+/i)?.[0].toUpperCase() as WorkFullNumber;
+            const matches = text.match(/[RBV]J\d+/i)?.[0].toUpperCase() as WorkFullCode;
             return matches ?? null;
         })
         .get()

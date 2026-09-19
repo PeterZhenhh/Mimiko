@@ -22,9 +22,9 @@ async function exists(url: URL["href"]): Promise<boolean> {
     }
 }
 
-export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<BaseTrackFile[]> => {
-    console.log(`Fetching tracks for ${jFullNumber} from japaneseasmr...`);
-    const rj = jFullNumber;
+export const tracks = async ({ jFullCode }: TrackRespFunc['params']): Promise<BaseTrackFile[]> => {
+    console.log(`Fetching tracks for ${jFullCode} from japaneseasmr...`);
+    const rj = jFullCode;
 
     // 1. 检查封面
     const cover = `https://pic.weeabo0.xyz/${rj.toUpperCase()}_img_main.jpg`;
@@ -43,7 +43,7 @@ export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<
             type: "audio",
             fileName: `${rj.toUpperCase()}_japaneseasmr.m3u8`,
             fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_v_japaneseasmr || "https://v.weeab0o.xyz"}/${rj.toUpperCase()}.m3u8`,
-            hash: objCoder.encode({ source: "japaneseasmr", type: "audio", id: jFullNumber })
+            hash: objCoder.encode({ source: "japaneseasmr", type: "audio", id: jFullCode })
         });
         return result;
     }
@@ -56,7 +56,7 @@ export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<
             type: "audio",
             fileName: `${rj.toUpperCase()}_1_japaneseasmr.mp3`,
             fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_v_japaneseasmr || "https://v.weeab0o.xyz"}/${rj.toUpperCase()}.mp3`,
-            hash: objCoder.encode({ source: "japaneseasmr", type: "audio", id: jFullNumber })
+            hash: objCoder.encode({ source: "japaneseasmr", type: "audio", id: jFullCode })
         });
     } else {
         return Promise.reject()
@@ -74,7 +74,7 @@ export const tracks = async ({ jFullNumber }: TrackRespFunc['params']): Promise<
             type: "audio",
             fileName: `${rj.toUpperCase()}_${i}_japaneseasmr.mp3`,
             fileUrl: `${tryGetContext<AppEnv>()?.env?.rprx_v_japaneseasmr || "https://v.weeab0o.xyz"}/${rj.toUpperCase()} ${i}.mp3`,
-            hash: objCoder.encode({ source: "japaneseasmr", type: "audio", id: jFullNumber })
+            hash: objCoder.encode({ source: "japaneseasmr", type: "audio", id: jFullCode })
         });
     }
 

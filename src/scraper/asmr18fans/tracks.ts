@@ -3,10 +3,10 @@ import * as cheerio from "cheerio";
 import * as objCoder from "../../utils/objCoder.ts";
 
 export const tracks = async ({
-    jFullNumber,
+    jFullCode,
 }: TrackRespFunc["params"]): Promise<BaseTrackFile[]> => {
-    console.log(`Fetching tracks for ${jFullNumber} from asmr18fans...`);
-    const url = `https://asmr18.fans/boys/${jFullNumber.toLowerCase()}`;
+    console.log(`Fetching tracks for ${jFullCode} from asmr18fans...`);
+    const url = `https://asmr18.fans/boys/${jFullCode.toLowerCase()}`;
     let html: string;
     try {
         console.log(url);
@@ -22,7 +22,7 @@ export const tracks = async ({
         ).text();
     } catch (error) {
         console.error(
-            `Error fetching tracks for ${jFullNumber} from asmr18fans:`,
+            `Error fetching tracks for ${jFullCode} from asmr18fans:`,
             error,
         );
         return Promise.reject();
@@ -40,11 +40,11 @@ export const tracks = async ({
         ret.push({
             type: "audio",
             fileName: `${label}_asmr18fans`,
-            fileUrl: `https://cdn3.cloudintech.net/file/${jFullNumber.toUpperCase()}/${label.replace(" ", "+")}.m3u8`,
+            fileUrl: `https://cdn3.cloudintech.net/file/${jFullCode.toUpperCase()}/${label.replace(" ", "+")}.m3u8`,
             hash: objCoder.encode({
                 source: "asmr18fans",
                 type: "audio",
-                id: jFullNumber,
+                id: jFullCode,
             }),
         });
     });
