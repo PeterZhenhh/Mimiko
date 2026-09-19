@@ -11,7 +11,7 @@ export const getCode = (numPrefix: number, type: "work" | "group"): string => {
     if (!Object.hasOwn(mapping, codePrefix)) {
         throw new Error(`${mapping}-${type} has no key named ${codePrefix}`);
     }
-    return `${mapping[codePrefix]}${parseInt(codePrefix) >= 0 ? parseInt(codePrefix).toString() : numPrefix.toString()}`;
+    return `${mapping[codePrefix]}${parseInt(codePrefix) >= 0 ? parseInt(codePrefix).toString().padStart(2, "0") : numPrefix.toString()}`;
 };
 
 export const getNum = (numPrefix: string, type: "work" | "group"): number => {
