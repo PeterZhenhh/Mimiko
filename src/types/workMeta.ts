@@ -38,15 +38,15 @@ export type RemoteWork = {
 // "RJ" | "BJ" | "VJ"
 type WorkNumPrefix = keyof typeof codeMapping.work
 
-// -1 | -2 | -3
+// 空 | -2 | -3
 type WorkNumberPrefix =
     (typeof codeMapping.work)[WorkNumPrefix]
 
 /**
- * 作品号转义数字类型
- * 语义：采用RJ/BJ/VJ类型映射前缀(-1/-2/-3) + 数值 拼接而成的数字标识
+ * 含有前缀0的8位/不含0的6位作品号转义类型
+ * 语义：采用RJ/BJ/VJ类型映射前缀(空/-2/-3) + 数值 拼接而成的标识
  */
-export type WorkNumber = number & {
+export type WorkNumber = string & {
     readonly __WorkNumber__: `${WorkNumberPrefix}${number}`;
 };
 

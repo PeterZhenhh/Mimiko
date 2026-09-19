@@ -3,8 +3,9 @@ import type { AppEnv } from "../../types/hono.ts";
 import { tryGetContext } from 'hono/context-storage'
 import * as objCoder from "../../utils/objCoder.ts"
 export const tracks = async ({ jFullCode }: TrackRespFunc['params']): Promise<BaseTrackFile[]> => {
+    const jFullCodePure=`${jFullCode.slice(0,2)}${parseInt(jFullCode.slice(2))}`
     console.log(`Fetching tracks for ${jFullCode} from asmrone...`);
-    const jNUm = jFullCode.match(/\d+/)?.[0] ?? ""
+    const jNUm = jFullCodePure.match(/\d+/)?.[0] ?? ""
     if (!jNUm) return  Promise.reject()
     const url = `https://api.asmr.one/api/tracks/${jNUm}`
     let data: any

@@ -68,7 +68,11 @@ app.get("/vas", async (c, next) => {
 
 // 获取作品信息
 app.get("/:_{workInfo|work}/:jNum", async (c, next) => {
-    const jNum = parseInt(c.req.param("jNum")) as WorkNumber;
+    const jNum = (
+        c.req.param("jNum").length > 6
+            ? c.req.param("jNum").padStart(8, "0")
+            : c.req.param("jNum")
+    ) as WorkNumber;
     const jFullCode = jNumCoder.toCode(jNum);
 
     return streamJson(c, async () => {
@@ -80,8 +84,14 @@ app.get("/:_{workInfo|work}/:jNum", async (c, next) => {
 
 // 获取作品曲目文件
 app.get("/tracks/:jNum", async (c, next) => {
-    const jNum = parseInt(c.req.param("jNum")) as WorkNumber;
+    const jNum = (
+        c.req.param("jNum").length > 6
+            ? c.req.param("jNum").padStart(8, "0")
+            : c.req.param("jNum")
+    ) as WorkNumber;
+    console.log(jNum)
     const jFullCode = jNumCoder.toCode(jNum);
+    console.log(jFullCode)
     return streamJson(c, async () => {
         const data = await (
             await import("./scraper/tracks.ts")
@@ -144,7 +154,7 @@ app.get(
         switch (field) {
             case "circle":
             case "tag":
-                query = { t: field, v: parseInt(data) };
+                query = { t: field, v: data };
                 break;
             case "va":
                 query = objCoder.decode(data);
